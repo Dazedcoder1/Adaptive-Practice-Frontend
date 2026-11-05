@@ -15,7 +15,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={client}>
       <AuthProvider>{children}</AuthProvider>
-      <Toaster position="top-right" richColors closeButton />
+      {/* Below the 64px header, so toasts never cover the account menu or other header controls. */}
+      <Toaster position="top-right" offset={{ top: 80 }} mobileOffset={{ top: 72 }} richColors closeButton />
     </QueryClientProvider>
   );
 }

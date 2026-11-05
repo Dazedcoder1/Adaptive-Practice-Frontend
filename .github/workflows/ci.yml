@@ -38,7 +38,7 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: ap_e2e
         ports: ["5432:5432"]
-        options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+        options: --health-cmd "pg_isready -U postgres" --health-interval 5s --health-retries 10
       redis:
         image: redis:7-alpine
         ports: ["6379:6379"]
@@ -49,6 +49,11 @@ jobs:
       ENVIRONMENT: test # mounts the test-only email inbox the E2E tests read
       EMAIL_BACKEND: console
       REQUIRE_EMAIL_VERIFICATION: "true" # E2E covers the full verification flow
+      # Every test signs up and signs in from this one machine (plus retries), which the normal
+      # per-IP limits would block. Production limits are unchanged.
+      RATE_LIMIT_REGISTER: "100/60"
+      RATE_LIMIT_LOGIN: "100/60"
+      RATE_LIMIT_EMAIL: "100/300"
     steps:
       - uses: actions/checkout@v4
         with:
